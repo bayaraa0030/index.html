@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жужуцу Кайсен - Фэн Вэбсайт</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a0a0a;
+    --bg-tertiary: #2a0f0f;
+    --red-primary: #dc2626;
+    --red-secondary: #ef4444;
+    --red-dark: #991b1b;
+    --red-glow: rgba(220, 38, 38, 0.5);
+    --text-primary: #f5f5f5;
+    --text-secondary: #d4d4d4;
+    --text-muted: #a3a3a3;
+    --glass-bg: rgba(26, 10, 10, 0.6);
+    --glass-border: rgba(220, 38, 38, 0.2);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+body.loading {
+    overflow: hidden;
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1a0a0a 0%, #0a0a0a 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-title {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--red-secondary), var(--red-primary), var(--red-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 2rem;
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 40px var(--red-glow);
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    border: 4px solid rgba(220, 38, 38, 0.1);
+    border-top: 4px solid var(--red-primary);
+    border-right: 4px solid var(--red-secondary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 30px var(--red-glow);
+}
+
+.loading-text {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Particle Background */
+#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    background: radial-gradient(circle, var(--red-secondary), transparent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: float 15s infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0) translateX(0);
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100vh) translateX(50px);
+    }
+}
+
+/* Navbar */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+nav.scrolled {
+    background: rgba(10, 10, 10, 0.95);
+    box-shadow: 0 4px 30px rgba(220, 38, 38, 0.2);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--red-secondary), var(--red-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.1em;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red-primary), var(--red-secondary));
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--red-secondary);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.mobile-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.mobile-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--red-primary);
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 6rem 2rem 4rem;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(153, 27, 27, 0.1) 0%, transparent 50%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    animation: fadeInUp 1s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--text-primary), var(--red-secondary), var(--red-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+}
+
+.hero-subtitle {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    line-height: 1.8;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.stat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--red-primary);
+    box-shadow: 0 10px 40px var(--red-glow);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--red-secondary), var(--red-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+/* Section Styles */
+section {
+    position: relative;
+    padding: 6rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    z-index: 1;
+}
+
+.section-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--text-primary), var(--red-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 4rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Plot Section */
+.plot-grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.plot-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.plot-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(220, 38, 38, 0.05));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.plot-card:hover::before {
+    opacity: 1;
+}
+
+.plot-card:hover {
+    transform: translateX(10px);
+    border-color: var(--red-primary);
+    box-shadow: 0 10px 40px var(--red-glow);
+}
+
+.plot-card h3 {
+    color: var(--red-secondary);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.plot-card-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.plot-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Characters Section */
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-top: 3rem;
+}
+
+.character-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.character-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 40%, rgba(220, 38, 38, 0.2));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.character-card:hover::after {
+    opacity: 1;
+}
+
+.character-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--red-primary);
+    box-shadow: 0 20px 60px var(--red-glow);
+}
+
+.character-image {
+    width: 100%;
+    height: 280px;
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.character-image svg {
+    width: 100%;
+    height: 100%;
+}
+
+.character-info {
+    padding: 1.8rem;
+}
+
+.character-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.character-role {
+    color: var(--red-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+}
+
+.character-desc {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.character-technique {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(153, 27, 27, 0.2));
+    border: 1px solid var(--red-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--red-secondary);
+    font-weight: 600;
+}
+
+/* Seasons Section */
+.seasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+    margin-top: 3rem;
+}
+
+.season-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.season-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.1), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.season-card:hover::before {
+    opacity: 1;
+}
+
+.season-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--red-primary);
+    box-shadow: 0 15px 50px var(--red-glow);
+}
+
+.season-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.season-number {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--red-secondary), var(--red-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.season-episodes {
+    background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.season-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    position: relative;
+}
+
+.season-arcs {
+    list-style: none;
+    margin-top: 1.5rem;
+    position: relative;
+}
+
+.season-arcs li {
+    color: var(--text-secondary);
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(220, 38, 38, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.season-arcs li::before {
+    content: '▹';
+    color: var(--red-primary);
+    font-size: 1.2rem;
+}
+
+.season-arcs li:last-child {
+    border-bottom: none;
+}
+
+/* Gallery Section */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 16/9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    border-color: var(--red-primary);
+    box-shadow: 0 15px 50px var(--red-glow);
+}
+
+.gallery-item svg {
+    width: 100%;
+    height: 100%;
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent 50%, rgba(10, 10, 10, 0.9));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 1.5rem;
+}
+
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.gallery-label {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Footer */
+footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--glass-border);
+    padding: 3rem 2rem;
+    margin-top: 6rem;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.footer-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--red-secondary);
+}
+
+/* Fade In Animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        background: rgba(10, 10, 10, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        transition: left 0.3s ease;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-links.active {
+        left: 0;
+    }
+
+    .mobile-toggle {
+        display: flex;
+    }
+
+    .mobile-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    .mobile-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .characters-grid,
+    .seasons-grid,
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+
+    section {
+        padding: 4rem 1.5rem;
+    }
+
+    .plot-card,
+    .season-card {
+        padding: 1.8rem;
+    }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--red-primary), var(--red-dark));
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--red-secondary), var(--red-primary));
+}
+</style>
+</head>
+<body class="loading">
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+    <div class="loading-title">ЖУЖУЦУ КАЙСЕН</div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Ачааллаж байна...</div>
+</div>
+
+<!-- Particles -->
+<div id="particles"></div>
+
+<!-- Navigation -->
+<nav id="navbar">
+    <div class="nav-container">
+        <div class="logo">呪術廻戦</div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Нүүр</a></li>
+            <li><a href="#plot">Өрнөл</a></li>
+            <li><a href="#characters">Дүрүүд</a></li>
+            <li><a href="#seasons">Улирлууд</a></li>
+            <li><a href="#gallery">Зургийн цомог</a></li>
+        </ul>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <h1>ЖУЖУЦУ КАЙСЕН</h1>
+        <p class="hero-subtitle">Харанхуй сэтгэлийн энергийг мэдэр. Дотоод харанхуйтайгаа тэмц</p>
+        <div class="hero-stats">
+            <div class="stat-card fade-in">
+                <div class="stat-number">9.0</div>
+                <div class="stat-label">MyAnimeList</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">47+</div>
+                <div class="stat-label">Анги</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">2</div>
+                <div class="stat-label">Улирал</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">2020</div>
+                <div class="stat-label">Он</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Plot Section -->
+<section id="plot">
+    <h2 class="section-title fade-in">Өрнөл</h2>
+    <p class="section-subtitle fade-in">Харанхуй нууц, хүчирхэг хараал, сэтгэлийн энергитэй ертөнц</p>
+    <div class="plot-grid">
+        <div class="plot-card fade-in">
+            <h3><span class="plot-card-icon">📖</span>Өрнөл</h3>
+            <p>Южи Итадори бол ер бусын биеийн хүчтэй, энгийн ахлах сургуулийн сурагч юм. Тэрээр сургуулийн Сүнс судлалын клубт элсэн орсон бөгөөд тэнд Рёомэн Сукуна гэдэг хүчирхэг хараалтайн хуруунуудын нэгийг олж авдаг. Найзуудаа хараалтаас хамгаалахын тулд Южи хурууг залгиж, Сукунагийн сав болдог. Гэсэн хэдий ч тэрээр Сукунагийн биеийг удирдаж чаддаг нь Жуужуцугийн мэргэжилтнүүдийн анхаарлыг татдаг. Түүнийг Жуужуцугийн Техникийн Сургуульд элсүүлж, бусад хараалтай хуруунуудыг олох даалгавар өгдөг.</p>
+        </div>
+        <div class="plot-card fade-in">
+            <h3><span class="plot-card-icon">⚔️</span>Зөрчил</h3>
+            <p>Жуужуцугийн ертөнцөд хараал бол хүмүүсийн сөрөг сэтгэл хөдлөлөөс төрсөн мангасууд юм. Жуужуцугийн шидтэнүүд сэтгэлийн энергийг ашиглан эдгээр хараалыг устгадаг. Южи, Мегуми, Нобара нар Сукунагийн 20 хурууг цуглуулж, түүнийг бүрэн устгахын тулд аюултай даалгавруудад оролцдог. Гэвч хараалтай сүнснүүд болон Сукуна өөрөө тэдний эсрэг хуйвалдаан хийж, хүн төрөлхтөнд аюул учруулж эхэлнэ. Шибуягийн үйл явдал бүх зүйлийг өөрчилж, Мегумигийн эгч, олон гэм зэмгүй хүмүүс аюулд орно.</p>
+        </div>
+        <div class="plot-card fade-in">
+            <h3><span class="plot-card-icon">🔥</span>Эрсдэл</h3>
+            <p>Сукунагийн бүх хурууг цуглуулсны дараа Южи цаазын ял хүлээх болно. Тэрээр найзууд, багш нартайгаа хамт улам хүчирхэг хараалтай тэмцэж, өөрийн хүнлэг чанараа хадгалахыг хичээдэг. Шибуягийн үйл явдал Токиог сүйрэлд хүргэж, олон шидтэн амь үрэгдэнэ. Кенжакугийн төлөвлөгөө хэрэгжиж, хамгийн хүчирхэг хараалтай сүнснүүд чөлөөлөгдөнө. Южи өөрийн доторх чөтгөртэй тэмцэж, хүн төрөлхтнийг хамгаалахын тулд өөрийгөө золиослоход бэлэн байх ёстой. Харанхуй ертөнцийн төгсгөл ирж байна.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Characters Section -->
+<section id="characters">
+    <h2 class="section-title fade-in">Дүрүүд</h2>
+    <p class="section-subtitle fade-in">Хүчирхэг шидтэнүүд ба аймшигт хараалтанууд</p>
+    <div class="characters-grid">
+        <div class="character-card fade-in">
+            <div class="character-image">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#991b1b;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="400" height="300" fill="#1a0a0a"/>
+                    <circle cx="200" cy="150" r="80" fill="url(#grad1)" opacity="0.3"/>
+                    <path d="M 200 80 L 180 120 L 160 110 L 180 150 L 160 180 L 200 170 L 220 210 L 230 170 L 260 180 L 240 150 L 260 110 L 220 120 Z" fill="#ef4444" opacity="0.6"/>
+                    <circle cx="200" cy="150" r="40" fill="#dc2626" opacity="0.8"/>
+                </svg>
+            </div>
+            <div class="character-info">
+                <h3 class="character-name">Южи Итадори</h3>
+                <div class="character-role">Гол дүр</div>
+                <p class="character-desc">Рёомэн Сукунагийн сав болсон ер бусын биеийн хүчтэй ахлах сургуулийн сурагч. Бүх хүмүүст туслахыг хүсдэг сайхан сэтгэлтэй залуу.</p>
+                <span class="character-technique">Хар Аянга</span>
+            </div>
+        </div>
+
+        <div class="character-card fade-in">
+            <div class="character-image">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1a0a0a;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#2a0f0f;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="400" height="300" fill="#0a0a0a"/>
+                    <polygon points="200,70 250,200 150,200" fill="url(#grad2)"/>
+                    <circle cx="170" cy="140" r="15" fill="#dc2626" opacity="0.8"/>
+                    <circle cx="230" cy="140" r="15" fill="#dc2626" opacity="0.8"/>
+                    <path d="M 120 220 L 280 220 L 260 250 L 140 250 Z" fill="#991b1b" opacity="0.5"/>
+                </svg>
+            </div>
+            <div class="character-info">
+                <h3 class="character-name">Мегуми Фушигуро</h3>
+                <div class="character-role">Шидтэн</div>
+                <p class="character-desc">Зэн-ин удмын өв залгамжлагч, Сүүдрийн арван төрлийн техникийг эзэмшсэн. Хүйтэн харагддаг ч найзууддаа маш их санаа тавьдаг.</p>
+                <span class="character-technique">Сүүдрийн Шид</span>
+            </div>
+        </div>
+
+        <div class="character-card fade-in">
+            <div class="character-image">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="300" fill="#1a0a0a"/>
+                    <circle cx="200" cy="120" r="50" fill="#991b1b" opacity="0.4"/>
+                    <rect x="180" y="160" width="40" height="80" fill="#dc2626" opacity="0.6"/>
+                    <circle cx="160" cy="100" r="8" fill="#ef4444"/>
+                    <circle cx="240" cy="100" r="8" fill="#ef4444"/>
+                    <path d="M 150 250 L 250 250 L 240 280 L 160 280 Z" fill="#991b1b" opacity="0.7"/>
+                </svg>
+            </div>
+            <div class="character-info">
+                <h3 class="character-name">Нобара Кугисаки</h3>
+                <div class="character-role">Шидтэн</div>
+                <p class="character-desc">Хөдөөний тосгоноос ирсэн зоригтой, өөртөө итгэлтэй шидтэн. Алх, хадаас ашиглан хараалыг устгадаг өвөрмөц техниктэй.</p>
+                <span class="character-technique">Сүрэл Хүүхэлдэй</span>
+            </div>
+        </div>
+
+        <div class="character-card fade-in">
+            <div class="character-image">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="grad3">
+                            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#991b1b;stop-opacity:0.2" />
+                        </radialGradient>
+                    </defs>
+                    <rect width="400" height="300" fill="#0a0a0a"/>
+                    <circle cx="200" cy="150" r="100" fill="url(#grad3)"/>
+                    <path d="M 200 50 L 220 120 L 280 130 L 235 170 L 250 230 L 200 200 L 150 230 L 165 170 L 120 130 L 180 120 Z" fill="#dc2626" opacity="0.9"/>
+                </svg>
+            </div>
+            <div class="character-info">
+                <h3 class="character-name">Сатору Гожо</h3>
+                <div class="character-role">Багш</div>
+                <p class="character-desc">Орчин үеийн хамгийн хүчирхэг жуужуцугийн шидтэн. Зургаан Нүд ба Хязгааргүй техникийг эзэмшсэн. Южигийн багш бөгөөд хамгаалагч.</p>
+                <span class="character-technique">Хязгааргүй</span>
+            </div>
+        </div>
+
+        <div class="character-card fade-in">
+            <div class="character-image">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="300" fill="#1a0a0a"/>
+                    <path d="M 200 60 L 240 140 L 320 160 L 240 180 L 200 260 L 160 180 L 80 160 L 160 140 Z" fill="#991b1b" opacity="0.6"/>
+                    <circle cx="200" cy="160" r="60" fill="#dc2626" opacity="0.4"/>
+                    <path d="M 170 140 L 190 120 L 210 120 L 230 140 L 220 160 L 180 160 Z" fill="#ef4444"/>
+                </svg>
+            </div>
+            <div class="character-info">
+                <h3 class="character-name">Рёомэн Сукуна</h3>
+                <div class="character-role">Хараалын Хаан</div>
+                <p class="character-desc">Мянган жилийн өмнөх хамгийн хүчирхэг хараалтай сүнс. Дөрвөн гар, хоёр нүүр гэдгээрээ алдартай. Южигийн биед оршдог.</p>
+                <span class="character-technique">Задлах, Хуваах</span>
+            </div>
+        </div>
+
+        <div class="character-card fade-in">
+            <div class="character-image">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="400" height="300" fill="#1a0a0a"/>
+                    <rect x="150" y="80" width="100" height="140" fill="#2a0f0f" opacity="0.8"/>
+                    <circle cx="200" cy="130" r="30" fill="#991b1b" opacity="0.6"/>
+                    <rect x="170" y="180" width="60" height="20" fill="#dc2626" opacity="0.7"/>
+                    <path d="M 140 240 L 260 240 L 250 270 L 150 270 Z" fill="#991b1b" opacity="0.5"/>
+                </svg>
+            </div>
+            <div class="character-info">
+                <h3 class="character-name">Кенто Нанами</h3>
+                <div class="character-role">Зэрэглэлийн 1 Шидтэн</div>
+                <p class="character-desc">Өмнө нь цалинтай ажилтан байсан, одоо шидтэн. Хэт их ажил хийдэг зарчимтай хүн. Южигд маш их зөвлөгөө өгдөг ах.</p>
+                <span class="character-technique">Харьцааны Цохилт</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seasons Section -->
+<section id="seasons">
+    <h2 class="section-title fade-in">Улирлууд</h2>
+    <p class="section-subtitle fade-in">Харанхуй аялалын үе шатууд</p>
+    <div class="seasons-grid">
+        <div class="season-card fade-in">
+            <div class="season-header">
+                <div class="season-number">01</div>
+                <div class="season-episodes">24 Анги</div>
+            </div>
+            <h3 class="season-title">1-р улирал</h3>
+            <ul class="season-arcs">
+                <li>Южигийн Танилцуулга Арк</li>
+                <li>Хараалтай Жирэмсэн Арк</li>
+                <li>Токио-Киото Солилцоо Арк</li>
+                <li>Үхлийн Зургийн Арк</li>
+            </ul>
+        </div>
+
+        <div class="season-card fade-in">
+            <div class="season-header">
+                <div class="season-number">02</div>
+                <div class="season-episodes">23 Анги</div>
+            </div>
+            <h3 class="season-title">2-р улирал</h3>
+            <ul class="season-arcs">
+                <li>Гожогийн Өнгөрсөн Арк</li>
+                <li>Шибуягийн Үйл Явдал Арк</li>
+                <li>Шибуягийн дараах Арк</li>
+                <li>Устгалын Тоглоомын Бэлтгэл</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section id="gallery">
+    <h2 class="section-title fade-in">Зургийн цомог</h2>
+    <p class="section-subtitle fade-in">Харанхуй ертөнцийн агшинууд</p>
+    <div class="gallery-grid">
+        <div class="gallery-item fade-in">
+            <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#991b1b;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect width="400" height="225" fill="url(#g1)"/>
+                <circle cx="200" cy="112" r="60" fill="#dc2626" opacity="0.3"/>
+                <path d="M 150 112 L 250 112 M 200 62 L 200 162" stroke="#ef4444" stroke-width="3" opacity="0.6"/>
+            </svg>
+            <div class="gallery-overlay">
+                <div class="gallery-label">Туxр Тулаан</div>
+            </div>
+        </div>
+
+        <div class="gallery-item fade-in">
+            <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="225" fill="#1a0a0a"/>
+                <polygon points="200,40 280,185 120,185" fill="#991b1b" opacity="0.5"/>
+                <circle cx="160" cy="120" r="20" fill="#dc2626" opacity="0.6"/>
+                <circle cx="240" cy="120" r="20" fill="#dc2626" opacity="0.6"/>
+            </svg>
+            <div class="gallery-overlay">
+                <div class="gallery-label">Хараалтай Эрчим</div>
+            </div>
+        </div>
+
+        <div class="gallery-item fade-in">
+            <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="g2">
+                        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.6" />
+                        <stop offset="100%" style="stop-color:#1a0a0a;stop-opacity:1" />
+                    </radialGradient>
+                </defs>
+                <rect width="400" height="225" fill="#0a0a0a"/>
+                <ellipse cx="200" cy="112" rx="150" ry="80" fill="url(#g2)"/>
+                <path d="M 100 112 Q 200 50 300 112 Q 200 174 100 112" fill="#991b1b" opacity="0.4"/>
+            </svg>
+            <div class="gallery-overlay">
+                <div class="gallery-label">Хязгааргүй</div>
+            </div>
+        </div>
+
+        <div class="gallery-item fade-in">
+            <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="225" fill="#1a0a0a"/>
+                <path d="M 0 150 Q 100 100 200 150 T 400 150 L 400 225 L 0 225 Z" fill="#2a0f0f" opacity="0.8"/>
+                <circle cx="200" cy="80" r="40" fill="#dc2626" opacity="0.4"/>
+                <path d="M 180 80 L 200 60 L 220 80 L 210 100 L 190 100 Z" fill="#ef4444"/>
+            </svg>
+            <div class="gallery-overlay">
+                <div class="gallery-label">Шибуягийн Шөнө</div>
+            </div>
+        </div>
+
+        <div class="gallery-item fade-in">
+            <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="225" fill="#0a0a0a"/>
+                <rect x="150" y="50" width="100" height="125" fill="#991b1b" opacity="0.3"/>
+                <circle cx="200" cy="90" r="25" fill="#dc2626" opacity="0.6"/>
+                <path d="M 170 140 L 230 140 L 225 160 L 175 160 Z" fill="#ef4444" opacity="0.5"/>
+            </svg>
+            <div class="gallery-overlay">
+                <div class="gallery-label">Сургуулийн Нууц</div>
+            </div>
+        </div>
+
+        <div class="gallery-item fade-in">
+            <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="g3" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#1a0a0a;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.3" />
+                    </linearGradient>
+                </defs>
+                <rect width="400" height="225" fill="url(#g3)"/>
+                <path d="M 50 180 L 150 100 L 250 140 L 350 80" stroke="#ef4444" stroke-width="4" fill="none" opacity="0.7"/>
+                <circle cx="150" cy="100" r="10" fill="#dc2626"/>
+                <circle cx="250" cy="140" r="10" fill="#dc2626"/>
+            </svg>
+            <div class="gallery-overlay">
+                <div class="gallery-label">Хүчний Өсөлт</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="#home">Нүүр</a>
+            <a href="#plot">Өрнөл</a>
+            <a href="#characters">Дүрүүд</a>
+            <a href="#seasons">Улирлууд</a>
+            <a href="#gallery">Зургийн цомог</a>
+        </div>
+        <p class="footer-text">Энэ бол албан бус фэн вэбсайт юм. Жужуцу Кайсен нь Гэгэ Акутами, Shueisha, MAPPA нарын өмч юм.</p>
+        <p class="footer-text" style="margin-top: 1rem; opacity: 0.6;">© 2024 Фэн Вэбсайт. Бүх эрх хуулиар хамгаалагдсан.</p>
+    </div>
+</footer>
+
+<script>
+// Loading Screen
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        const body = document.body;
+        loadingScreen.classList.add('hidden');
+        body.classList.remove('loading');
+    }, 2500);
+});
+
+// Mobile Menu Toggle
+const mobileToggle = document.getElementById('mobileToggle');
+const navLinks = document.getElementById('navLinks');
+
+mobileToggle.addEventListener('click', () => {
+    mobileToggle.classList.toggle('active');
+    navLinks.classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+    });
+});
+
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// Fade in animation on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.fade-in').forEach(el => {
+    observer.observe(el);
+});
+
+// Particle animation
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 4 + 1;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+createParticles();
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offset = 80;
+            const targetPosition = target.offsetTop - offset;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>
